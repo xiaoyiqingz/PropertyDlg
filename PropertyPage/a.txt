@@ -1,0 +1,27 @@
+m_hwndNextVieweRemoveClipboardFormatListener	if (fout == NULL) return;
+
+		fprintf(fout, "%s", cBuffer);
+
+		VERIFY( fclose(fout) != EOF );
+				
+	}  else if (IsClipboardFormatAvailable(CF_BITMAP)){   //将剪切板上内容显示在界面上
+		HBITMAP handler = (HBITMAP)GetClipboardData(CF_BITMAP);
+		CBitmap *bitmap = CBitmap::FromHandle(handler);
+		CClientDC cdc(this);
+		CDC dc;else if (IsClipboardFormatAvailable(CF_OEMTEXT)) {
+		MessageBox(_T("CF_UNICODETEXT"));	
+	} else if (IsClipboardFormatAvailable(CF_HDROP)) {
+		int cch;
+		TCHAR szFile[MAX_PATH];
+		TCHAR szDest[MAX_PATH];
+		TCHAR* szBuffer;
+#include "stdafx.h"
+#include "PropertyPage.h"
+#include "PropertyPageDlg.h"
+#include "ConfigSheet.h"
+#include "afxdialogex.h"
+
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#endif
+CreateDirectoryLPCTSTR lpSrcPath, LPCTSTR lpDestPathzisync截图MFC  剪切板操作
