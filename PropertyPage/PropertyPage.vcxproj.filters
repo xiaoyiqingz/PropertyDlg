@@ -72,6 +72,9 @@
     <ClInclude Include="Utils\SystemTray.h">
       <Filter>Utils</Filter>
     </ClInclude>
+    <ClInclude Include="TestDlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PropertyPage.cpp">
@@ -109,6 +112,9 @@
     </ClCompile>
     <ClCompile Include="Utils\SystemTray.cpp">
       <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="TestDlg.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

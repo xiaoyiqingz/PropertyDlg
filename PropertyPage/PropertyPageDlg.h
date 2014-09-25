@@ -29,6 +29,7 @@ public:
 	CDropEdit m_etDest;
 
 	ULONG  m_nNotify;
+	CLinkCtrl m_syslink;
 
 	CSystemTray  m_SysTray;
 public:
@@ -74,7 +75,7 @@ public:
 	afx_msg void OnBnClickedButton7();
 	afx_msg void OnBnClickedButton8();
 	afx_msg void OnBnClickedButton9();
-	CLinkCtrl m_syslink;
+	afx_msg void OnBnClickedButton10();
 	afx_msg void OnNMClickSyslink1(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnNMClickSyslink2(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnExit();

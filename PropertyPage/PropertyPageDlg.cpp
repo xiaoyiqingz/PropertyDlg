@@ -7,6 +7,7 @@
 #include "PropertyPageDlg.h"
 #include "ConfigSheet.h"
 #include "afxdialogex.h"
+#include "TestDlg.h"
 #include "..\HookDll\HookDll.h"
 
 #ifdef _DEBUG
@@ -98,6 +99,7 @@ BEGIN_MESSAGE_MAP(CPropertyPageDlg, CDialog)
 	ON_NOTIFY(NM_CLICK, IDC_SYSLINK1, &CPropertyPageDlg::OnNMClickSyslink1)
 	ON_NOTIFY(NM_CLICK, IDC_SYSLINK2, &CPropertyPageDlg::OnNMClickSyslink2)
 	ON_COMMAND(ID_EXIT, &CPropertyPageDlg::OnExit)
+	ON_BN_CLICKED(IDC_BUTTON10, OnBnClickedButton10)
 	ON_WM_TIMER()
 END_MESSAGE_MAP()
 
@@ -702,10 +704,15 @@ void CPropertyPageDlg::OnBnClickedButton9()
 		} else {
 			pWndC->ShowWindow(SW_SHOW);
 		}
-	}
-
-	
+	}	
 }
+
+void CPropertyPageDlg::OnBnClickedButton10()
+{
+	CTestDlg dlg;
+	dlg.DoModal();
+}
+
 
 LRESULT CPropertyPageDlg::OnFileChange(WPARAM wParam, LPARAM lParam)
 {
