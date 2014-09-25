@@ -9,7 +9,7 @@
 #endif
 
 #include "resource.h"		// main symbols
-
+#include "PropertyPageDlg.h"
 
 // CPropertyPageApp:
 // See PropertyPage.cpp for the implementation of this class
@@ -20,6 +20,8 @@ class CPropertyPageApp : public CWinApp
 public:
 	CPropertyPageApp();
 
+protected:
+	CPropertyPageDlg *		m_pMainDialog;
 // Overrides
 public:
 	virtual BOOL InitInstance();
@@ -27,6 +29,7 @@ public:
 // Implementation
 
 	DECLARE_MESSAGE_MAP()
+	virtual int ExitInstance();
 };
 
 extern CPropertyPageApp theApp;

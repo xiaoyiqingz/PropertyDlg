@@ -142,7 +142,7 @@ void CDropEdit::OnLButtonDown(UINT nFlags, CPoint point)
 	COleDataSource source;
 	source.Empty();
 	source.CacheGlobalData( CF_HDROP, hMemData );
-	DROPEFFECT dwEffect = source.DoDragDrop(DROPEFFECT_COPY);
+	DROPEFFECT dwEffect = source.DoDragDrop(DROPEFFECT_MOVE);
 	CString strText;
 	strText.Format(_T("%d\n"), dwEffect);
 	OutputDebugString(strText);

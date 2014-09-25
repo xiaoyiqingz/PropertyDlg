@@ -3,6 +3,10 @@
 //
 
 #include "stdafx.h"
+#include <DbgHelp.h>
+#include <ShellAPI.h>
+#include <ShlObj.h>
+#include <strsafe.h>
 #include "PropertyPage.h"
 #include "PropertyPageDlg.h"
 
@@ -17,6 +21,64 @@ BEGIN_MESSAGE_MAP(CPropertyPageApp, CWinApp)
 	ON_COMMAND(ID_HELP, &CWinApp::OnHelp)
 END_MESSAGE_MAP()
 
+
+
+LONG  WINAPI   callback(_EXCEPTION_POINTERS*   excp)   
+{   
+	SetErrorMode( SEM_NOGPFAULTERRORBOX );
+
+	CString strBuild;
+	strBuild.Format(L"Build: %s %s", __DATE__, __TIME__);
+	CString strError;
+	HMODULE hModule;
+	WCHAR szModuleName[MAX_PATH] = L"";
+	GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS, (LPCWSTR)excp->ExceptionRecord->ExceptionAddress, &hModule);
+	GetModuleFileName(hModule, szModuleName, ARRAYSIZE(szModuleName));
+	strError.AppendFormat(_T("%s %d , %d ,%d."), szModuleName,excp->ExceptionRecord->ExceptionCode, excp->ExceptionRecord->ExceptionFlags, excp->ExceptionRecord->ExceptionAddress);
+
+	//生成 mini crash dump
+	BOOL bMiniDumpSuccessful;
+	WCHAR szPath[MAX_PATH]; 
+	WCHAR szFileName[MAX_PATH]; 
+	WCHAR* szAppName = _T("zisync");
+	WCHAR* szVersion = _T("v1.0");
+	DWORD dwBufferSize = MAX_PATH;
+	HANDLE hDumpFile;
+	SYSTEMTIME stLocalTime;
+	MINIDUMP_EXCEPTION_INFORMATION ExpParam;
+	GetLocalTime( &stLocalTime );
+	GetTempPath( dwBufferSize, szPath );
+	StringCchPrintf(szFileName, MAX_PATH, _T("%s%s"), szPath, szAppName);
+	CreateDirectory(szFileName, NULL );
+	StringCchPrintf(szFileName, MAX_PATH, _T("%s-%04d%02d%02d-%02d%02d%02d-%ld-%ld.dmp"), 
+		szVersion, 
+		stLocalTime.wYear, stLocalTime.wMonth, stLocalTime.wDay, 
+		stLocalTime.wHour, stLocalTime.wMinute, stLocalTime.wSecond, 
+		GetCurrentProcessId(), GetCurrentThreadId());
+	hDumpFile = CreateFile(szFileName, GENERIC_READ|GENERIC_WRITE, 
+		FILE_SHARE_WRITE|FILE_SHARE_READ, 0, CREATE_ALWAYS, 0, 0);
+
+	MINIDUMP_USER_STREAM UserStream[2];
+	MINIDUMP_USER_STREAM_INFORMATION UserInfo;
+	UserInfo.UserStreamCount = 1;
+	UserInfo.UserStreamArray = UserStream;
+	UserStream[0].Type = CommentStreamW;
+	UserStream[0].BufferSize = strBuild.GetLength()*sizeof(WCHAR);
+	UserStream[0].Buffer = strBuild.GetBuffer();
+	UserStream[1].Type = CommentStreamW;
+	UserStream[1].BufferSize = strError.GetLength()*sizeof(WCHAR);
+	UserStream[1].Buffer = strError.GetBuffer();
+
+	ExpParam.ThreadId = GetCurrentThreadId();
+	ExpParam.ExceptionPointers = excp;
+	ExpParam.ClientPointers = TRUE;
+
+	MINIDUMP_TYPE MiniDumpWithDataSeg = MiniDumpNormal;
+	bMiniDumpSuccessful = MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), 
+		hDumpFile, MiniDumpWithDataSeg, &ExpParam, NULL, NULL); 
+	::MessageBox(NULL, _T("程序出错！"), _T("错误"), MB_YESNO);
+	return   EXCEPTION_EXECUTE_HANDLER;   
+}
 
 // CPropertyPageApp construction
 
@@ -50,7 +112,7 @@ BOOL CPropertyPageApp::InitInstance()
 	InitCommonControlsEx(&InitCtrls);
 
 	CWinApp::InitInstance();
-
+	SetUnhandledExceptionFilter(callback);
 
 	AfxEnableControlContainer();
 
@@ -67,8 +129,13 @@ BOOL CPropertyPageApp::InitInstance()
 	// such as the name of your company or organization
 	AfxOleInit();
 	SetRegistryKey(_T("Local AppWizard-Generated Applications"));
+	
+	m_pMainDialog = new CPropertyPageDlg();
+	m_pMainWnd = m_pMainDialog;
+	m_pMainDialog->Create(CPropertyPageDlg::IDD, NULL);
+	m_pMainDialog->ShowTrayIcon();
 
-	CPropertyPageDlg dlg;
+	/*CPropertyPageDlg dlg;
 	m_pMainWnd = &dlg;
 	INT_PTR nResponse = dlg.DoModal();
 	if (nResponse == IDOK)
@@ -86,10 +153,21 @@ BOOL CPropertyPageApp::InitInstance()
 	if (pShellManager != NULL)
 	{
 		delete pShellManager;
-	}
+	}*/
 
 	// Since the dialog has been closed, return FALSE so that we exit the
 	//  application, rather than start the application's message pump.
-	return FALSE;
+	return TRUE;
 }
 
+
+
+int CPropertyPageApp::ExitInstance()
+{
+	if (m_pMainDialog != NULL) {
+		delete m_pMainDialog;
+		m_pMainDialog = NULL;
+	}
+
+	return CWinApp::ExitInstance();
+}

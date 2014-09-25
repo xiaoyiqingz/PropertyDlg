@@ -8,6 +8,9 @@
 #include "DropEdit.h"
 #include "afxwin.h"
 #include "afxcmn.h"
+#include "Utils/SystemTray.h"
+
+#define  WM_FILE_CHANGE WM_USER+0x02
 
 // CPropertyPageDlg dialog
 class CPropertyPageDlg : public CDialog
@@ -16,15 +19,18 @@ class CPropertyPageDlg : public CDialog
 public:
 	CButton m_bCheck;
 	HWND	m_preveHwnd;
-
 	CWnd * pWndC;
 	CMyDialog*  pWndT;
 
+	CMyButton m_Button;
 	CString m_strFilePathIn;
 	CString m_strFilePathOut;
 	CDropEdit m_etSrc;
 	CDropEdit m_etDest;
 
+	ULONG  m_nNotify;
+
+	CSystemTray  m_SysTray;
 public:
 	CPropertyPageDlg(CWnd* pParent = NULL);	// standard constructor
 
@@ -46,10 +52,14 @@ protected:
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
+	afx_msg LRESULT OnFileChange(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
+
+public:
+	void	ShowTrayIcon();
+
 public:
 	afx_msg void OnBnClickedButtonProperty();
-	CMyButton m_Button;
 	afx_msg void OnBnClickedButton1();
 	afx_msg void OnClickedCheck1();
 	afx_msg void OnClipboardUpdate();
@@ -64,4 +74,16 @@ public:
 	afx_msg void OnBnClickedButton7();
 	afx_msg void OnBnClickedButton8();
 	afx_msg void OnBnClickedButton9();
+	CLinkCtrl m_syslink;
+	afx_msg void OnNMClickSyslink1(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnNMClickSyslink2(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnExit();
+	afx_msg void OnBnClickedDump();
+	afx_msg void OnTimer(UINT_PTR nIDEvent);
 };
+
+typedef struct
+{
+	DWORD dwItem1;  // dwItem1 contains the previous PIDL or name of the folder. 
+	DWORD dwItem2;  // dwItem2 contains the new PIDL or name of the folder. 
+}SHNotifyInfo;

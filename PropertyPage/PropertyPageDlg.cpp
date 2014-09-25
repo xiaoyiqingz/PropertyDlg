@@ -7,12 +7,14 @@
 #include "PropertyPageDlg.h"
 #include "ConfigSheet.h"
 #include "afxdialogex.h"
+#include "..\HookDll\HookDll.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
 #define  IDC_TANCHUANG  WM_USER + 0x01  
+
 
 // CAboutDlg dialog used for App About
 
@@ -70,6 +72,7 @@ void CPropertyPageDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT2, m_strFilePathOut);
 	DDX_Control(pDX, IDC_EDIT1, m_etSrc);
 	DDX_Control(pDX, IDC_EDIT2, m_etDest);
+	DDX_Control(pDX, IDC_SYSLINK1, m_syslink);
 }
 
 BEGIN_MESSAGE_MAP(CPropertyPageDlg, CDialog)
@@ -90,6 +93,12 @@ BEGIN_MESSAGE_MAP(CPropertyPageDlg, CDialog)
 	ON_BN_CLICKED(IDC_BUTTON7, &CPropertyPageDlg::OnBnClickedButton7)
 	ON_BN_CLICKED(IDC_BUTTON8, &CPropertyPageDlg::OnBnClickedButton8)
 	ON_BN_CLICKED(IDC_BUTTON9, &CPropertyPageDlg::OnBnClickedButton9)
+	ON_BN_CLICKED(IDC_DUMP, OnBnClickedDump)
+	ON_MESSAGE(WM_FILE_CHANGE, OnFileChange)
+	ON_NOTIFY(NM_CLICK, IDC_SYSLINK1, &CPropertyPageDlg::OnNMClickSyslink1)
+	ON_NOTIFY(NM_CLICK, IDC_SYSLINK2, &CPropertyPageDlg::OnNMClickSyslink2)
+	ON_COMMAND(ID_EXIT, &CPropertyPageDlg::OnExit)
+	ON_WM_TIMER()
 END_MESSAGE_MAP()
 
 // CPropertyPageDlg message handlers
@@ -147,6 +156,13 @@ BOOL CPropertyPageDlg::OnInitDialog()
 	m_etSrc.Register();
 	m_etDest.Register();
 
+
+	SHChangeNotifyEntry sn = {0};
+	sn.fRecursive = TRUE;
+	sn.pidl    = 0;
+
+	m_nNotify = SHChangeNotifyRegister( m_hWnd, SHCNRF_InterruptLevel|SHCNRF_ShellLevel,SHCNE_ALLEVENTS, WM_FILE_CHANGE, 1,  &sn );
+
 //	SetHook(GetSafeHwnd());
 	/*g_Hook = SetWindowsHookEx(WH_GETMESSAGE, GetMsgProc, NULL, GetCurrentThreadId());
 	g_Hwnd = GetSafeHwnd();*/
@@ -202,7 +218,15 @@ HCURSOR CPropertyPageDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
+void CPropertyPageDlg::ShowTrayIcon()
+{
+	CString strText(_T("Pro"));
+	HICON hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 
+	m_SysTray.Create(NULL, WM_APP+1, strText, hIcon,
+		IDR_MENU1, FALSE, NULL, _T("hello"), 0UL, 3U);
+	m_SysTray.SetTargetWnd(this);
+}
 
 void CPropertyPageDlg::OnBnClickedButtonProperty()
 {
@@ -275,13 +299,15 @@ void CPropertyPageDlg::OnBnClickedButton1()
 void CPropertyPageDlg::OnClickedCheck1()
 {
 	// TODO: Add your control notification handler code here
+
+/*
 	if (m_bCheck.GetCheck() == BST_CHECKED) {
 //		m_preveHwnd =SetClipboardViewer();
 		AddClipboardFormatListener(this->GetSafeHwnd());
 	} else {
 //		ChangeClipboardChain(m_preveHwnd);
 		RemoveClipboardFormatListener(this->GetSafeHwnd());
-	}
+	}*/
 }
 
 
@@ -467,13 +493,14 @@ BOOL CPropertyPageDlg::CreateMultiDirectory(LPCTSTR lpSrcPath, LPCTSTR lpDestPat
 
 void CPropertyPageDlg::OnBnClickedButton2()
 {
+/*
 	CoInitialize(NULL); 
 
 	LPWSTR lpwLibaryPath;
 	TCHAR szPath[MAX_PATH];
 	if (SUCCEEDED(SHGetKnownFolderPath(FOLDERID_Libraries, KF_FLAG_DEFAULT_PATH, NULL, &lpwLibaryPath))) {
-		wcscpy(szPath, lpwLibaryPath);
-		wcscat(szPath, _T("\\ZiSync.library-ms"));
+		_tcscpy_s(szPath, lpwLibaryPath);
+		_tcscat_s(szPath, _T("\\ZiSync.library-ms"));
 	}
 	
 
@@ -511,19 +538,20 @@ void CPropertyPageDlg::OnBnClickedButton2()
 			pIShelLibrary->Release();
 		}
 		::CoUninitialize();
-	}
+	}*/
 }
 
 void CPropertyPageDlg::OnBnClickedButton3()
 {
+/*
 	CoInitialize(NULL);
 
 	IShellLibrary *pIShelLibrary;
 	LPWSTR lpwLibaryPath;
 	TCHAR szPath[MAX_PATH];
 	if (SUCCEEDED(SHGetKnownFolderPath(FOLDERID_Libraries, KF_FLAG_DEFAULT_PATH, NULL, &lpwLibaryPath))) {
-		wcscpy(szPath, lpwLibaryPath);
-		wcscat(szPath, _T("\\ZiSync.library-ms"));
+		_tcscpy_s(szPath, lpwLibaryPath);
+		_tcscat_s(szPath, _T("\\ZiSync.library-ms"));
 	}
 
 	HRESULT hr = SHLoadLibraryFromParsingName(szPath, STGM_READWRITE, 
@@ -536,23 +564,23 @@ void CPropertyPageDlg::OnBnClickedButton3()
 	lpwLibaryPath = NULL;
 	if (pIShelLibrary != NULL) {
 		pIShelLibrary->Release();
-	}
+	
 	::CoUninitialize();
-
+	}*/
 }
 
 
 void CPropertyPageDlg::OnBnClickedButton4()
 {
 
-	CoInitialize(NULL);
+	/*CoInitialize(NULL);
 
 	IShellLibrary *pIShelLibrary;
 	LPWSTR lpwLibaryPath;
 	TCHAR szPath[MAX_PATH];
 	if (SUCCEEDED(SHGetKnownFolderPath(FOLDERID_Libraries, KF_FLAG_DEFAULT_PATH, NULL, &lpwLibaryPath))) {
-		wcscpy(szPath, lpwLibaryPath);
-		wcscat(szPath, _T("\\ZiSync.library-ms"));
+		_tcscpy_s(szPath, lpwLibaryPath);
+		_tcscat_s(szPath, _T("\\ZiSync.library-ms"));
 	}
 
 	HRESULT hr = SHLoadLibraryFromParsingName(szPath, STGM_READWRITE, 
@@ -566,7 +594,7 @@ void CPropertyPageDlg::OnBnClickedButton4()
 		pIShelLibrary->Release();
 	}	
 
-	::CoUninitialize();
+	::CoUninitialize();*/
 }
 
 
@@ -595,6 +623,31 @@ void CPropertyPageDlg::OnBnClickedButton5()
 }
 
 
+void CPropertyPageDlg::OnBnClickedDump()
+{
+	SetTimer(1, 1000, NULL);
+}
+
+
+void CPropertyPageDlg::OnTimer(UINT_PTR nIDEvent)
+{
+	static int n = 5;
+	int a = 15;
+	int b;
+	switch (nIDEvent) {
+		case 1:
+			n--;
+			b = a / n;
+			CString strText;
+			strText.Format(_T("%d\n"), b);
+			m_strFilePathOut = strText;
+			UpdateData(FALSE);
+		break;
+	}
+	
+	CDialog::OnTimer(nIDEvent);
+}
+
 void CPropertyPageDlg::OnDestroy()
 {
 	CDialog::OnDestroy();
@@ -616,7 +669,7 @@ void CPropertyPageDlg::OnDropFiles(HDROP hDropInfo)
 	UINT nFile;
 	TCHAR szFilePath[MAX_PATH+1];
 	nFile = ::DragQueryFile(hDropInfo, (UINT)(-1), NULL, 0);
-	for (int i = 0; i < nFile; i++) {
+	for (UINT i = 0; i < nFile; i++) {
 		szFilePath[0] = 0;
 		::DragQueryFile(hDropInfo, i, szFilePath, MAX_PATH);
 		m_strFilePathIn += szFilePath;
@@ -653,3 +706,43 @@ void CPropertyPageDlg::OnBnClickedButton9()
 
 	
 }
+
+LRESULT CPropertyPageDlg::OnFileChange(WPARAM wParam, LPARAM lParam)
+{
+	SHNotifyInfo*   pShellInfo   =   (SHNotifyInfo*)wParam;
+	TCHAR szSrc[MAX_PATH] = {0};
+	TCHAR szDes[MAX_PATH] = {0};
+
+	SHGetPathFromIDList( (LPCITEMIDLIST)pShellInfo->dwItem1, szSrc );
+	SHGetPathFromIDList( (LPCITEMIDLIST)pShellInfo->dwItem2, szDes );
+	switch(lParam)
+	{
+	case SHCNE_CREATE:
+		m_strFilePathIn.Format(_T("%s"), szSrc);
+		m_strFilePathOut.Format(_T("%s"), szDes);
+		UpdateData(FALSE);
+		break;
+	}
+
+	return S_OK;
+}
+
+void CPropertyPageDlg::OnNMClickSyslink1(NMHDR *pNMHDR, LRESULT *pResult)  
+{   
+	PNMLINK pNMLink = (PNMLINK) pNMHDR;   
+	ShellExecuteW(NULL, L"open", _T("http://www.zisync.com"), NULL, NULL, SW_SHOWNORMAL); 	        
+	*pResult = 0;  
+}  
+
+void CPropertyPageDlg::OnNMClickSyslink2(NMHDR *pNMHDR, LRESULT *pResult)  
+{   
+	PNMLINK pNMLink = (PNMLINK) pNMHDR;   
+	ShellExecuteW(NULL, L"open", _T("mailto:zisync@126.com"), NULL, NULL, SW_SHOWNORMAL); 	        
+	*pResult = 0;  
+}  
+
+void CPropertyPageDlg::OnExit()
+{
+	DestroyWindow();
+}
+
