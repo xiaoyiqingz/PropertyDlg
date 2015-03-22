@@ -23,7 +23,7 @@ END_MESSAGE_MAP()
 
 
 
-LONG  WINAPI   callback(_EXCEPTION_POINTERS*   excp)   
+LONG  WINAPI  callback(_EXCEPTION_POINTERS*   excp)   
 {   
 	SetErrorMode( SEM_NOGPFAULTERRORBOX );
 
@@ -130,9 +130,16 @@ BOOL CPropertyPageApp::InitInstance()
 	AfxOleInit();
 	SetRegistryKey(_T("Local AppWizard-Generated Applications"));
 	
+	LPTSTR lpCmd = GetCommandLine();
+	TCHAR szCmd[MAX_PATH] = _T("\"G:\\vstest\\PropertyPage\\Debug\\PropertyPage.exe\" -autorun"); 
+	MessageBox(NULL, lpCmd, NULL, MB_OK);
 	m_pMainDialog = new CPropertyPageDlg();
 	m_pMainWnd = m_pMainDialog;
 	m_pMainDialog->Create(CPropertyPageDlg::IDD, NULL);
+/*
+	if (!_tcscmp(lpCmd, szCmd)) {
+		m_pMainDialog->ShowWindow(SW_HIDE);
+	}*/
 	m_pMainDialog->ShowTrayIcon();
 
 	/*CPropertyPageDlg dlg;

@@ -81,6 +81,9 @@ public:
 	afx_msg void OnExit();
 	afx_msg void OnBnClickedDump();
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
+	afx_msg void OnBnClickedNewDialog();
+	afx_msg BOOL OnCopyData(CWnd* pWnd, COPYDATASTRUCT* pCopyDataStruct);
+	afx_msg void OnBnClickedButton11();
 };
 
 typedef struct

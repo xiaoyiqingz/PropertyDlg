@@ -101,6 +101,9 @@ BEGIN_MESSAGE_MAP(CPropertyPageDlg, CDialog)
 	ON_COMMAND(ID_EXIT, &CPropertyPageDlg::OnExit)
 	ON_BN_CLICKED(IDC_BUTTON10, OnBnClickedButton10)
 	ON_WM_TIMER()
+	ON_BN_CLICKED(IDC_NEW_DIALOG, OnBnClickedNewDialog)
+	ON_WM_COPYDATA()
+	ON_BN_CLICKED(IDC_BUTTON11, &CPropertyPageDlg::OnBnClickedButton11)
 END_MESSAGE_MAP()
 
 // CPropertyPageDlg message handlers
@@ -127,7 +130,6 @@ LRESULT CALLBACK GetMsgProc(
 BOOL CPropertyPageDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-
 	// Add "About..." menu item to system menu.
 
 	// IDM_ABOUTBOX must be in the system command range.
@@ -164,7 +166,7 @@ BOOL CPropertyPageDlg::OnInitDialog()
 	sn.pidl    = 0;
 
 	m_nNotify = SHChangeNotifyRegister( m_hWnd, SHCNRF_InterruptLevel|SHCNRF_ShellLevel,SHCNE_ALLEVENTS, WM_FILE_CHANGE, 1,  &sn );
-
+	//SetTimer(2, 5000, NULL);
 //	SetHook(GetSafeHwnd());
 	/*g_Hook = SetWindowsHookEx(WH_GETMESSAGE, GetMsgProc, NULL, GetCurrentThreadId());
 	g_Hwnd = GetSafeHwnd();*/
@@ -637,13 +639,22 @@ void CPropertyPageDlg::OnTimer(UINT_PTR nIDEvent)
 	int a = 15;
 	int b;
 	switch (nIDEvent) {
-		case 1:
-			n--;
-			b = a / n;
-			CString strText;
-			strText.Format(_T("%d\n"), b);
-			m_strFilePathOut = strText;
-			UpdateData(FALSE);
+	case 1: {
+		n--;
+		b = a / n;
+		CString strText;
+		strText.Format(_T("%d\n"), b);
+		m_strFilePathOut = strText;
+		UpdateData(FALSE);
+			}
+			break;
+
+		case 2:
+			CRect rcClient;
+			GetWindowRect(&rcClient);
+			rcClient.right += 100;
+			rcClient.bottom += 100;
+			MoveWindow(rcClient);
 		break;
 	}
 	
@@ -753,3 +764,53 @@ void CPropertyPageDlg::OnExit()
 	DestroyWindow();
 }
 
+void CPropertyPageDlg::OnBnClickedNewDialog()
+{
+	CTestDlg dlg;
+	dlg.DoModal();
+}
+
+
+
+BOOL CPropertyPageDlg::OnCopyData(CWnd* pWnd, COPYDATASTRUCT* pCopyDataStruct)
+{
+	if (pCopyDataStruct->dwData == 0) {
+		LPCTSTR szData = (LPCTSTR)(pCopyDataStruct->lpData);
+		CString strData = szData;
+		MessageBox(szData);
+		//pWnd->ShowWindow(SW_HIDE);
+	} 
+
+	return CDialog::OnCopyData(pWnd, pCopyDataStruct);
+}
+
+
+void CPropertyPageDlg::OnBnClickedButton11()
+{
+	HANDLE hFile_ = OpenFileMapping(FILE_MAP_ALL_ACCESS, FALSE, 
+		_T("test file map"));
+	
+	DWORD dwError;
+	if (hFile_ == NULL) {
+		dwError = GetLastError();
+		CString strError;
+		strError.Format(_T("%d"), dwError);
+
+		MessageBox(strError, _T("Error"), MB_OK | MB_ICONERROR);
+		return;
+	}
+
+	LPVOID lpMap_ = MapViewOfFile(hFile_, FILE_MAP_ALL_ACCESS, 0 , 0, 0);
+	if (lpMap_ == NULL) {
+		dwError = GetLastError();
+		CString strError;
+		strError.Format(_T("%d"), dwError);
+
+		MessageBox(strError, _T("Error"), MB_OK | MB_ICONERROR);
+		return;
+	}
+
+	CString strMap = (LPCTSTR)lpMap_;
+	UnmapViewOfFile(lpMap_);
+	CloseHandle(hFile_);
+}
