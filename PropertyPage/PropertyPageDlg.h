@@ -84,6 +84,7 @@ public:
 	afx_msg void OnBnClickedNewDialog();
 	afx_msg BOOL OnCopyData(CWnd* pWnd, COPYDATASTRUCT* pCopyDataStruct);
 	afx_msg void OnBnClickedButton11();
+	afx_msg void OnBnClickedButton12();
 };
 
 typedef struct

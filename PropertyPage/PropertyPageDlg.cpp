@@ -104,6 +104,7 @@ BEGIN_MESSAGE_MAP(CPropertyPageDlg, CDialog)
 	ON_BN_CLICKED(IDC_NEW_DIALOG, OnBnClickedNewDialog)
 	ON_WM_COPYDATA()
 	ON_BN_CLICKED(IDC_BUTTON11, &CPropertyPageDlg::OnBnClickedButton11)
+	ON_BN_CLICKED(IDC_BUTTON12, &CPropertyPageDlg::OnBnClickedButton12)
 END_MESSAGE_MAP()
 
 // CPropertyPageDlg message handlers
@@ -813,4 +814,33 @@ void CPropertyPageDlg::OnBnClickedButton11()
 	CString strMap = (LPCTSTR)lpMap_;
 	UnmapViewOfFile(lpMap_);
 	CloseHandle(hFile_);
+}
+
+
+void CPropertyPageDlg::OnBnClickedButton12()
+{
+	SOCKET ClientSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	
+	SOCKADDR_IN SerVerAddr;
+	SerVerAddr.sin_family = AF_INET;
+	SerVerAddr.sin_addr.S_un.S_addr = inet_addr("127.0.0.1");
+	SerVerAddr.sin_port = htons(8849);
+
+	int res = connect(ClientSocket, (SOCKADDR*)&SerVerAddr, sizeof(SerVerAddr));
+	if (res != 0) {
+		res = WSAGetLastError();
+	}
+
+	CString strPath;
+	GetModuleFileName(NULL, strPath.GetBuffer(MAX_PATH), MAX_PATH);
+	strPath.ReleaseBuffer();
+	strPath = strPath.Left(strPath.ReverseFind(_T('\\')));
+
+	char buf[MAX_PATH] = "zhangzhe,nihao!";
+	res = send(ClientSocket, buf, strlen(buf), 0);
+	if (res == SOCKET_ERROR) {
+		res = WSAGetLastError();
+	}
+
+	closesocket(ClientSocket);
 }

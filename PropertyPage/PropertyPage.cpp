@@ -130,6 +130,13 @@ BOOL CPropertyPageApp::InitInstance()
 	AfxOleInit();
 	SetRegistryKey(_T("Local AppWizard-Generated Applications"));
 	
+	WSADATA wsaData;
+	int res = WSAStartup(MAKEWORD(2, 2), &wsaData);
+	if (res !=0 ) {
+		MessageBox(NULL, _T("Socket≥ı ºªØ ß∞‹"), NULL,  MB_ICONERROR|MB_OK);
+		return FALSE;
+	}
+
 	LPTSTR lpCmd = GetCommandLine();
 	TCHAR szCmd[MAX_PATH] = _T("\"G:\\vstest\\PropertyPage\\Debug\\PropertyPage.exe\" -autorun"); 
 	MessageBox(NULL, lpCmd, NULL, MB_OK);
@@ -176,5 +183,6 @@ int CPropertyPageApp::ExitInstance()
 		m_pMainDialog = NULL;
 	}
 
+	WSACleanup();
 	return CWinApp::ExitInstance();
 }
