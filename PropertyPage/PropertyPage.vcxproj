@@ -122,8 +122,9 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <AdditionalDependencies>Dbghelp.lib;Ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <GenerateMapFile>true</GenerateMapFile>
-      <MapFileName>zi</MapFileName>
+      <GenerateMapFile>false</GenerateMapFile>
+      <MapFileName>
+      </MapFileName>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -219,6 +220,9 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TestDlg.h" />
+    <ClInclude Include="Thread.h" />
+    <ClInclude Include="UIThread.h" />
+    <ClInclude Include="UIThreadDlg.h" />
     <ClInclude Include="Utils\SystemTray.h" />
   </ItemGroup>
   <ItemGroup>
@@ -239,6 +243,9 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="TestDlg.cpp" />
+    <ClCompile Include="Thread.cpp" />
+    <ClCompile Include="UIThread.cpp" />
+    <ClCompile Include="UIThreadDlg.cpp" />
     <ClCompile Include="Utils\SystemTray.cpp" />
   </ItemGroup>
   <ItemGroup>

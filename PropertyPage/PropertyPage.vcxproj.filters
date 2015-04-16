@@ -16,6 +16,9 @@
     <Filter Include="Utils">
       <UniqueIdentifier>{60caa7a5-31a0-40d6-9172-8f2d3f1fb45f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Help">
+      <UniqueIdentifier>{53fdfe9d-b1c5-4258-a4d4-61a518c4bec0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -75,6 +78,15 @@
     <ClInclude Include="TestDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Thread.h">
+      <Filter>Help</Filter>
+    </ClInclude>
+    <ClInclude Include="UIThread.h">
+      <Filter>Help</Filter>
+    </ClInclude>
+    <ClInclude Include="UIThreadDlg.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PropertyPage.cpp">
@@ -114,6 +126,15 @@
       <Filter>Utils</Filter>
     </ClCompile>
     <ClCompile Include="TestDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Thread.cpp">
+      <Filter>Help</Filter>
+    </ClCompile>
+    <ClCompile Include="UIThread.cpp">
+      <Filter>Help</Filter>
+    </ClCompile>
+    <ClCompile Include="UIThreadDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

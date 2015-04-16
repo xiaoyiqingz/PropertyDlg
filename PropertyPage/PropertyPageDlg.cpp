@@ -767,7 +767,7 @@ void CPropertyPageDlg::OnExit()
 
 void CPropertyPageDlg::OnBnClickedNewDialog()
 {
-	CTestDlg dlg;
+	CMyDialog dlg;
 	dlg.DoModal();
 }
 
@@ -834,9 +834,50 @@ void CPropertyPageDlg::OnBnClickedButton12()
 	CString strPath;
 	GetModuleFileName(NULL, strPath.GetBuffer(MAX_PATH), MAX_PATH);
 	strPath.ReleaseBuffer();
-	strPath = strPath.Left(strPath.ReverseFind(_T('\\')));
+	strPath = strPath.Left(strPath.ReverseFind(_T('\\')) + 1);
+	strPath.Append(_T("text"));
+	
+	HANDLE hFile = ::CreateFile(strPath, GENERIC_READ, 0, NULL, OPEN_EXISTING, 
+		FILE_ATTRIBUTE_NORMAL, NULL);
+	DWORD dwByteWrited = 0;
+	if (hFile == INVALID_HANDLE_VALUE) {
+		DWORD dwError = GetLastError();
+		if (dwError == ERROR_FILE_NOT_FOUND) {
+			hFile = ::CreateFile(strPath, GENERIC_WRITE|GENERIC_READ, 0, NULL,
+				CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+			ASSERT(hFile != INVALID_HANDLE_VALUE);
+			WriteFile(hFile, (LPVOID)strPath.GetBuffer(), strPath.GetLength()*2, 
+				&dwByteWrited, NULL);
+			strPath.ReleaseBuffer();
+			ASSERT(strPath.GetLength()*2 == dwByteWrited);
+		} else {
+			//DWORD WINAPI FormatMessage()
+			CString strError;
+			strError.Format(_T("error:%d"), dwError);
+			MessageBox(strError);
+			return;
+		}
+	}
 
-	char buf[MAX_PATH] = "zhangzhe,nihao!";
+	DWORD dwBytesRead = 0;
+	TCHAR szToSend[MAX_PATH] = _T("-name:test -file:");
+	TCHAR szBuffer[MAX_PATH] = _T("\0");
+	BOOL bRes = ReadFile(hFile, (LPVOID)szBuffer, MAX_PATH, &dwBytesRead, NULL);
+	if (!bRes) {
+		DWORD dwError = GetLastError();
+		CString strError;
+		strError.Format(_T("error:%d"), dwError);
+		MessageBox(strError);
+		return;
+	}
+	CloseHandle(hFile);
+	//char buf[MAX_PATH] = "zhangzhe,nihao!";
+	
+	_tcscat_s(szToSend, szBuffer);
+	char buf[MAX_PATH] = "\0";
+	WideCharToMultiByte(CP_UTF8, 0, szToSend, sizeof(szToSend), buf, MAX_PATH, 
+		NULL, NULL);
+
 	res = send(ClientSocket, buf, strlen(buf), 0);
 	if (res == SOCKET_ERROR) {
 		res = WSAGetLastError();

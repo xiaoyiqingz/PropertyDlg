@@ -139,7 +139,6 @@ BOOL CPropertyPageApp::InitInstance()
 
 	LPTSTR lpCmd = GetCommandLine();
 	TCHAR szCmd[MAX_PATH] = _T("\"G:\\vstest\\PropertyPage\\Debug\\PropertyPage.exe\" -autorun"); 
-	MessageBox(NULL, lpCmd, NULL, MB_OK);
 	m_pMainDialog = new CPropertyPageDlg();
 	m_pMainWnd = m_pMainDialog;
 	m_pMainDialog->Create(CPropertyPageDlg::IDD, NULL);
@@ -161,13 +160,13 @@ BOOL CPropertyPageApp::InitInstance()
 	{
 		// TODO: Place code here to handle when the dialog is
 		//  dismissed with Cancel
-	}
+	}*/
 
 	// Delete the shell manager created above.
 	if (pShellManager != NULL)
 	{
 		delete pShellManager;
-	}*/
+	}
 
 	// Since the dialog has been closed, return FALSE so that we exit the
 	//  application, rather than start the application's message pump.
