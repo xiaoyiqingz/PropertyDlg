@@ -44,7 +44,12 @@ void CUIThreadDlg::OnBnClickedButton1()
 void CUIThreadDlg::OnCancel()
 {
 	CDialog::OnCancel();
-	PostMessage(WM_QUIT);  // to end this ui thread
+
+	// not good and output will have a warning:
+	//calling DestroyWindow in CDialog::~CDialog --OnDestroy or PostNcDestroy in derived class will not be called.
+	//PostMessage(WM_QUIT);  
+
+	DestroyWindow();  // you should always do this
 }
 
 

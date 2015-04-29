@@ -158,8 +158,8 @@ BOOL CPropertyPageDlg::OnInitDialog()
 
 	// TODO: Add extra initialization here
 
-	m_etSrc.Register();
-	m_etDest.Register();
+	//m_etSrc.Register();   when you register, will create three thread
+	//m_etDest.Register();
 
 
 	SHChangeNotifyEntry sn = {0};
